@@ -20,7 +20,10 @@
 package __ID__;
 
 import android.os.Bundle;
-import org.apache.cordova.*;
+import com.huawei.android.hms.agent.HMSAgent;
+import com.huawei.android.hms.agent.common.handler.ConnectHandler;
+import com.huawei.android.hms.agent.push.handler.GetTokenHandler;
+import org.apache.cordova.CordovaActivity;
 
 public class __ACTIVITY__ extends CordovaActivity
 {
@@ -28,7 +31,23 @@ public class __ACTIVITY__ extends CordovaActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+         //华为机型连接华为服务器
+        if (OSHelper.isEmui()){
+            HMSAgent.connect(this, new ConnectHandler() {
+                @Override
+                public void onConnect(int rst) {
+                    System.out.println("HMS connect end:" + rst);
+                    HMSAgent.Push.getToken(new GetTokenHandler() {
+                        @Override
+                        public void onResult(int rst) {
+                            System.out.println("get token: end" + rst);
 
+                        }
+                    });
+
+                }
+            });
+        }
         // enable Cordova apps to be started in the background
         Bundle extras = getIntent().getExtras();
         if (extras != null && extras.getBoolean("cdvStartInBackground", false)) {
